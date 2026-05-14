@@ -42,11 +42,15 @@ Dan Ibu Ribkah Sutarmi`,
   ];
 
   return (
-    <main className="bg-gradient-to-b from-slate-100 to-blue-50 min-h-screen text-slate-700">
+  <main className="bg-gradient-to-b from-slate-100 to-blue-50 min-h-screen text-slate-700">
 
-      <audio autoPlay loop controls className="fixed bottom-4 right-4 z-50">
-        <source src="/lagu-pernikahan.mp3" type="audio/mpeg" />
-      </audio>
+    <audio controls autoPlay loop className="fixed bottom-4 right-4 z-50">
+      <source
+        src="https://vt.tiktok.com/ZSxdNKUb4/"
+        type="audio/mpeg"
+      />
+      Browser Anda tidak mendukung audio.
+    </audio>
 
       <section className="min-h-screen flex flex-col items-center justify-center text-center px-6">
         <p className="tracking-[0.4em] uppercase text-sm mb-4">
