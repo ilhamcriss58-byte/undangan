@@ -22,7 +22,7 @@ Dan Ibu Ribkah Sutarmi`,
     {
       title: "Detail Acara",
       content:
-        "Senin, 25 Mei 2026. Akad dimulai pukul 07.00 WIB dan Syukuran pukul 09.00 WIB sampai selesai.",
+        "Senin, 25 Mei 2026. Akad dimulai pukul 07.00 WIB dan Resepsi pukul 09.00 WIB sampai selesai.",
     },
     {
       title: "Lokasi",
@@ -43,6 +43,11 @@ Dan Ibu Ribkah Sutarmi`,
 
   return (
     <main className="bg-gradient-to-b from-slate-100 to-blue-50 min-h-screen text-slate-700">
+
+      <audio autoPlay loop controls className="fixed bottom-4 right-4 z-50">
+        <source src="/lagu-pernikahan.mp3" type="audio/mpeg" />
+      </audio>
+
       <section className="min-h-screen flex flex-col items-center justify-center text-center px-6">
         <p className="tracking-[0.4em] uppercase text-sm mb-4">
           The Wedding Of
@@ -110,7 +115,10 @@ Dan Ibu Ribkah Sutarmi`,
               <div className="mt-12 grid md:grid-cols-2 gap-6">
                 <div className="bg-slate-100 rounded-3xl p-6 text-center">
                   <h3 className="text-2xl mb-2">Transfer Bank BRI</h3>
-                  <p className="font-semibold">a.n. Anggun Ning Tyas</p>
+
+                  <p className="font-semibold">
+                    a.n. Anggun Ning Tyas
+                  </p>
 
                   <p className="mt-2 text-xl tracking-widest">
                     2233 0101 8163 506
@@ -136,32 +144,28 @@ Dan Ibu Ribkah Sutarmi`,
           </div>
         </section>
       ))}
-    <footer className="py-20 px-6 text-center bg-white">
-  <h2 className="text-4xl md:text-5xl font-light text-slate-800 mb-6">
-    Terima Kasih
-  </h2>
 
-  <p className="max-w-2xl mx-auto text-lg md:text-xl leading-relaxed text-slate-600">
-    Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila
-    Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu
-    untuk pernikahan kami.
-  </p>
+      <footer className="py-20 px-6 text-center bg-white">
+        <h2 className="text-4xl md:text-5xl font-light text-slate-800 mb-6">
+          Terima Kasih
+        </h2>
 
-  <div className="mt-10">
-    <h3 className="text-3xl md:text-4xl font-light text-slate-800">
-      Anggun & Ilham
-    </h3>
+        <p className="max-w-2xl mx-auto text-lg md:text-xl leading-relaxed text-slate-600">
+          Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila
+          Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu
+          untuk pernikahan kami.
+        </p>
 
-    <p className="mt-4 text-slate-500 tracking-widest uppercase text-sm">
-      25 Mei 2026
-    </p>
-  </div>
-</footer>
-      </main>
+        <div className="mt-10">
+          <h3 className="text-3xl md:text-4xl font-light text-slate-800">
+            Anggun & Ilham
+          </h3>
+
+          <p className="mt-4 text-slate-500 tracking-widest uppercase text-sm">
+            25 Mei 2026
+          </p>
+        </div>
+      </footer>
+    </main>
   );
 }
-<main className="bg-gradient-to-b from-slate-100 to-blue-50 min-h-screen text-slate-700">
-
-  <audio autoPlay loop controls className="fixed bottom-4 right-4 z-50">
-    <source src="/lagu-pernikahan.mp3" type="audio/mpeg" />
-  </audio>
