@@ -88,7 +88,7 @@ Dan Ibu Ribkah Sutarmi`,
                 </div>
 
                 <div className="bg-slate-100 rounded-3xl p-6">
-                  <h3 className="text-2xl mb-2">Syukuran</h3>
+                  <h3 className="text-2xl mb-2">Resepsi</h3>
                   <p>09.00 WIB - Selesai</p>
                 </div>
               </div>
@@ -136,6 +136,32 @@ Dan Ibu Ribkah Sutarmi`,
           </div>
         </section>
       ))}
-    </main>
+    <footer className="py-20 px-6 text-center bg-white">
+  <h2 className="text-4xl md:text-5xl font-light text-slate-800 mb-6">
+    Terima Kasih
+  </h2>
+
+  <p className="max-w-2xl mx-auto text-lg md:text-xl leading-relaxed text-slate-600">
+    Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila
+    Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu
+    untuk pernikahan kami.
+  </p>
+
+  <div className="mt-10">
+    <h3 className="text-3xl md:text-4xl font-light text-slate-800">
+      Anggun & Ilham
+    </h3>
+
+    <p className="mt-4 text-slate-500 tracking-widest uppercase text-sm">
+      25 Mei 2026
+    </p>
+  </div>
+</footer>
+      </main>
   );
 }
+<main className="bg-gradient-to-b from-slate-100 to-blue-50 min-h-screen text-slate-700">
+
+  <audio autoPlay loop controls className="fixed bottom-4 right-4 z-50">
+    <source src="/lagu-pernikahan.mp3" type="audio/mpeg" />
+  </audio>
