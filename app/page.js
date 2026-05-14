@@ -42,34 +42,45 @@ Dan Ibu Ribkah Sutarmi`,
   ];
 
   return (
-  <main className="bg-gradient-to-b from-slate-100 to-blue-50 min-h-screen text-slate-700">
+    <main className="bg-gradient-to-b from-slate-100 to-blue-50 min-h-screen text-slate-700">
 
-    <audio controls autoPlay loop className="fixed bottom-4 right-4 z-50">
-      <source
-        src="music-pernikahan.mp3"
-        type="audio/mpeg"
-      />
-      Browser Anda tidak mendukung audio.
-    </audio>
+      <audio controls autoPlay loop className="fixed bottom-4 right-4 z-50">
+        <source
+          src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8e4d6d3.mp3?filename=romantic-piano-112194.mp3"
+          type="audio/mpeg"
+        />
+        Browser Anda tidak mendukung audio.
+      </audio>
 
-      <section className="min-h-screen flex flex-col items-center justify-center text-center px-6">
-        <p className="tracking-[0.4em] uppercase text-sm mb-4">
-          The Wedding Of
-        </p>
+      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 overflow-hidden">
 
-        <h1 className="text-6xl md:text-8xl font-light mb-6 text-slate-800">
-          Anggun <span className="text-slate-400">&</span> Ilham
-        </h1>
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-30"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1600&auto=format&fit=crop')",
+          }}
+        ></div>
 
-        <p className="text-lg md:text-xl max-w-2xl leading-relaxed">
-          Dengan penuh rasa syukur dan kebahagiaan, kami mengundang
-          Bapak/Ibu/Saudara/i untuk hadir dalam hari istimewa kami.
-        </p>
-
-        <div className="mt-10 border border-slate-300 px-8 py-4 rounded-full bg-white shadow-lg">
-          <p className="text-sm tracking-widest uppercase">
-            25 Mei 2026
+        <div className="relative z-10">
+          <p className="tracking-[0.4em] uppercase text-sm mb-4">
+            The Wedding Of
           </p>
+
+          <h1 className="text-6xl md:text-8xl font-light mb-6 text-slate-800">
+            Anggun <span className="text-slate-400">&</span> Ilham
+          </h1>
+
+          <p className="text-lg md:text-xl max-w-2xl leading-relaxed">
+            Dengan penuh rasa syukur dan kebahagiaan, kami mengundang
+            Bapak/Ibu/Saudara/i untuk hadir dalam hari istimewa kami.
+          </p>
+
+          <div className="mt-10 border border-slate-300 px-8 py-4 rounded-full bg-white shadow-lg">
+            <p className="text-sm tracking-widest uppercase">
+              25 Mei 2026
+            </p>
+          </div>
         </div>
       </section>
 
@@ -78,7 +89,7 @@ Dan Ibu Ribkah Sutarmi`,
           key={index}
           className="min-h-screen flex items-center justify-center px-6 py-20"
         >
-          <div className="max-w-4xl w-full bg-white rounded-[40px] shadow-2xl p-10 md:p-16">
+          <div className="max-w-4xl w-full bg-white/90 rounded-[40px] shadow-2xl p-10 md:p-16">
             <div className="text-center mb-10">
               <h2 className="text-4xl md:text-5xl font-light text-slate-800">
                 {section.title}
