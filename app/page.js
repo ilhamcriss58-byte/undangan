@@ -1,11 +1,20 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
 export default function Home() {
+  const audioRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+
   const sections = [
     {
+      id: "intro",
       title: "Undangan Pernikahan",
       content:
         "Pernikahan adalah awal dari kisah indah yang akan ditulis bersama, dengan setiap hari menjadi bab baru yang penuh sukacita dan kebahagiaan.",
     },
     {
+      id: "mempelai",
       title: "Mempelai",
       content: `Anggun Ning Tyas
 
@@ -20,38 +29,86 @@ Putra dari Bapak Ishak Sriyono
 Dan Ibu Ribkah Sutarmi`,
     },
     {
+      id: "acara",
       title: "Detail Acara",
       content:
         "Senin, 25 Mei 2026. Akad dimulai pukul 07.00 WIB dan Resepsi pukul 09.00 WIB sampai selesai.",
     },
     {
+      id: "lokasi",
       title: "Lokasi",
       content:
         "Bertempat di Desa Panjang RT.13/RW.5, Kedungadem, Bojonegoro, Jawa Timur.",
     },
     {
+      id: "doa",
       title: "Doa & Restu",
       content:
         "Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.",
     },
     {
+      id: "gift",
       title: "Hadiah Pernikahan",
       content:
-        "Doa restu keluarga, sahabat, serta rekan-rekan semua di pernikahan kami sudah sangat cukup sebagai hadiah.",
+        "Doa restu keluarga, sahabat, serta rekan-rekan semua sudah sangat cukup sebagai hadiah terbaik bagi kami.",
     },
   ];
 
-  return (
-    <main className="bg-gradient-to-b from-slate-100 to-blue-50 min-h-screen text-slate-700">
+  // ===== MUSIC CONTROL =====
+  const toggleMusic = async () => {
+    if (!audioRef.current) return;
 
-      <audio controls autoPlay loop className="fixed bottom-4 right-4 z-50">
+    try {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        await audioRef.current.play();
+        setIsPlaying(true);
+      }
+    } catch (err) {
+      console.log("Autoplay blocked:", err);
+    }
+  };
+
+  // fallback agar loop benar-benar stabil
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handleEnded = () => {
+      audio.currentTime = 0;
+      audio.play();
+    };
+
+    audio.addEventListener("ended", handleEnded);
+    return () => audio.removeEventListener("ended", handleEnded);
+  }, []);
+
+  return (
+    <main className="bg-gradient-to-b from-slate-100 to-blue-50 min-h-screen text-slate-700 scroll-smooth">
+
+      {/* ===== AUDIO (UNTIL I FOUND YOU INSTRUMENTAL LOOP) ===== */}
+      <audio
+        ref={audioRef}
+        loop
+        preload="auto"
+      >
         <source
-          src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8e4d6d3.mp3?filename=romantic-piano-112194.mp3"
+          src="https://cdn.pixabay.com/download/audio/2022/11/22/audio_d0f1b8a6c3.mp3?filename=romantic-piano-ambient-118215.mp3"
           type="audio/mpeg"
         />
-        Browser Anda tidak mendukung audio.
       </audio>
 
+      {/* BUTTON MUSIC */}
+      <button
+        onClick={toggleMusic}
+        className="fixed bottom-5 right-5 z-50 bg-white/90 shadow-lg px-5 py-3 rounded-full text-sm backdrop-blur"
+      >
+        {isPlaying ? "Pause Musik" : "Play Musik"}
+      </button>
+
+      {/* ===== HERO ===== */}
       <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 overflow-hidden">
 
         <div
@@ -60,61 +117,67 @@ Dan Ibu Ribkah Sutarmi`,
             backgroundImage:
               "url('https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1600&auto=format&fit=crop')",
           }}
-        ></div>
+        />
 
         <div className="relative z-10">
           <p className="tracking-[0.4em] uppercase text-sm mb-4">
             The Wedding Of
           </p>
 
-          <h1 className="text-6xl md:text-8xl font-light mb-6 text-slate-800">
+          <h1 className="text-5xl md:text-8xl font-light mb-6">
             Anggun <span className="text-slate-400">&</span> Ilham
           </h1>
 
-          <p className="text-lg md:text-xl max-w-2xl leading-relaxed">
-            Dengan penuh rasa syukur dan kebahagiaan, kami mengundang
-            Bapak/Ibu/Saudara/i untuk hadir dalam hari istimewa kami.
+          <p className="text-lg md:text-xl max-w-2xl">
+            Dengan penuh rasa syukur kami mengundang Anda untuk hadir di hari bahagia kami.
           </p>
 
-          <div className="mt-10 border border-slate-300 px-8 py-4 rounded-full bg-white shadow-lg">
-            <p className="text-sm tracking-widest uppercase">
-              25 Mei 2026
-            </p>
+          <div className="mt-10 border px-8 py-4 rounded-full bg-white shadow-lg">
+            25 Mei 2026
           </div>
         </div>
       </section>
 
-      {sections.map((section, index) => (
+      {/* ===== SECTIONS ===== */}
+      {sections.map((section) => (
         <section
-          key={index}
-          className="min-h-screen flex items-center justify-center px-6 py-20"
+          key={section.id}
+          className="relative min-h-screen flex items-center justify-center px-6 py-20 overflow-hidden"
         >
-          <div className="max-w-4xl w-full bg-white/90 rounded-[40px] shadow-2xl p-10 md:p-16">
-            <div className="text-center mb-10">
-              <h2 className="text-4xl md:text-5xl font-light text-slate-800">
-                {section.title}
-              </h2>
-            </div>
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-20"
+            style={{
+              backgroundImage:
+                "url('https://images.unsplash.com/photo-1534088568595-a066f410bcda?q=80&w=1600&auto=format&fit=crop')",
+            }}
+          />
 
-            <p className="text-lg md:text-2xl leading-relaxed text-center whitespace-pre-line">
+          <div className="relative z-10 max-w-4xl w-full bg-white/85 backdrop-blur-md rounded-[40px] shadow-2xl p-10 md:p-16">
+
+            <h2 className="text-3xl md:text-5xl text-center font-light mb-8">
+              {section.title}
+            </h2>
+
+            <p className="text-lg md:text-xl text-center whitespace-pre-line">
               {section.content}
             </p>
 
-            {index === 2 && (
-              <div className="mt-12 grid md:grid-cols-2 gap-6 text-center">
-                <div className="bg-slate-100 rounded-3xl p-6">
-                  <h3 className="text-2xl mb-2">Akad Nikah</h3>
+            {/* DETAIL ACARA */}
+            {section.id === "acara" && (
+              <div className="mt-10 grid md:grid-cols-2 gap-6 text-center">
+                <div className="bg-slate-100 p-6 rounded-3xl">
+                  <h3 className="text-xl mb-2">Akad</h3>
                   <p>07.00 WIB</p>
                 </div>
-
-                <div className="bg-slate-100 rounded-3xl p-6">
-                  <h3 className="text-2xl mb-2">Resepsi</h3>
+                <div className="bg-slate-100 p-6 rounded-3xl">
+                  <h3 className="text-xl mb-2">Resepsi</h3>
                   <p>09.00 WIB - Selesai</p>
                 </div>
               </div>
             )}
 
-            {index === 3 && (
+            {/* LOKASI */}
+            {section.id === "lokasi" && (
               <div className="mt-10 text-center">
                 <a
                   href="https://maps.google.com/?q=Desa+Panjang+RT13+RW5+Kedungadem+Bojonegoro"
@@ -126,33 +189,18 @@ Dan Ibu Ribkah Sutarmi`,
               </div>
             )}
 
-            {index === 5 && (
-              <div className="mt-12 grid md:grid-cols-2 gap-6">
-                <div className="bg-slate-100 rounded-3xl p-6 text-center">
-                  <h3 className="text-2xl mb-2">Transfer Bank BRI</h3>
-
-                  <p className="font-semibold">
-                    a.n. Anggun Ning Tyas
-                  </p>
-
-                  <p className="mt-2 text-xl tracking-widest">
-                    2233 0101 8163 506
-                  </p>
-
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/6/68/BANK_BRI_logo.svg"
-                    alt="Logo BRI"
-                    className="h-8 mx-auto mt-4"
-                  />
+            {/* GIFT */}
+            {section.id === "gift" && (
+              <div className="mt-10 grid md:grid-cols-2 gap-6">
+                <div className="bg-slate-100 p-6 rounded-3xl text-center">
+                  <h3 className="text-xl mb-2">Transfer Bank BRI</h3>
+                  <p className="font-semibold">Anggun Ning Tyas</p>
+                  <p className="mt-2 tracking-widest">223301018163506</p>
                 </div>
 
-                <div className="bg-slate-100 rounded-3xl p-6 text-center">
-                  <h3 className="text-2xl mb-4">Kirim Hadiah</h3>
-
-                  <p>
-                    Desa Panjang RT.13/RW.5,
-                    Kedungadem, Bojonegoro
-                  </p>
+                <div className="bg-slate-100 p-6 rounded-3xl text-center">
+                  <h3 className="text-xl mb-2">Alamat</h3>
+                  <p>Desa Panjang, Bojonegoro</p>
                 </div>
               </div>
             )}
@@ -160,25 +208,26 @@ Dan Ibu Ribkah Sutarmi`,
         </section>
       ))}
 
-      <footer className="py-20 px-6 text-center bg-white">
-        <h2 className="text-4xl md:text-5xl font-light text-slate-800 mb-6">
-          Terima Kasih
-        </h2>
+      {/* ===== FOOTER ===== */}
+      <footer className="relative py-20 text-center overflow-hidden">
 
-        <p className="max-w-2xl mx-auto text-lg md:text-xl leading-relaxed text-slate-600">
-          Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila
-          Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu
-          untuk pernikahan kami.
-        </p>
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-20"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1600&auto=format&fit=crop')",
+          }}
+        />
 
-        <div className="mt-10">
-          <h3 className="text-3xl md:text-4xl font-light text-slate-800">
-            Anggun & Ilham
-          </h3>
-
-          <p className="mt-4 text-slate-500 tracking-widest uppercase text-sm">
-            25 Mei 2026
+        <div className="relative z-10">
+          <h2 className="text-4xl mb-6">Terima Kasih</h2>
+          <p className="max-w-2xl mx-auto">
+            Kehadiran dan doa restu Anda adalah kebahagiaan terbesar bagi kami.
           </p>
+
+          <div className="mt-10 text-3xl">
+            Anggun & Ilham
+          </div>
         </div>
       </footer>
     </main>
