@@ -8,7 +8,7 @@ export default function Home() {
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
-  const [isReady, setIsReady] = useState(false); // Memastikan audio siap
+  const [isReady, setIsReady] = useState(false);
   const [toast, setToast] = useState("");
 
   const [countdown, setCountdown] = useState({ d: 0, h: 0, m: 0, s: 0 });
@@ -16,9 +16,11 @@ export default function Home() {
 
   const sections = [
     { id: "intro", title: "Undangan Pernikahan", content: "Pernikahan adalah awal dari kisah indah yang akan ditulis bersama." },
-    { id: "mempelai", title: "Mempelai", content: "Anggun Ning Tyas\n&\nIlham Kristuaji" },
-    { id: "acara", title: "Detail Acara", content: "Akad 07.00 WIB & Resepsi 09.00 WIB" },
-    { id: "lokasi", title: "Lokasi", content: "Bojonegoro, Jawa Timur" },
+    { id: "mempelai", title: "Mempelai", content: `Anggun Ning Tyas\nPutri dari Bapak M. Slamet Riyadi\nDan Ibu Sri Endah Puspitorini\n\n&\n\nIlham Kristuaji\nPutra dari Bapak Ishak Sriyono\nDan Ibu Ribkah Sutarmi` },
+    { id: "acara", title: "Detail Acara", content: "Senin, 25 Mei 2026. Akad dimulai pukul 07.00 WIB dan Resepsi pukul 09.00 WIB sampai selesai." },
+    { id: "lokasi", title: "Lokasi", content: "Desa Panjang RT.13/RW.5, Kedungadem, Bojonegoro, Jawa Timur." },
+    { id: "doa", title: "Doa & Restu", content: "Merupakan suatu kehormatan bagi kami apabila Bapak/Ibu berkenan hadir memberikan doa restu." },
+    { id: "gift", title: "Hadiah Pernikahan", content: "Doa restu Anda sudah sangat cukup sebagai hadiah terbaik bagi kami." },
   ];
 
   // ================= COUNTDOWN =================
@@ -37,157 +39,167 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [targetDate]);
 
-  // ================= SAFE FADE =================
-  const fadeVolume = (audio, to, duration = 800) => {
+  // ================= AUDIO LOGIC =================
+  const fadeVolume = (to, duration = 1200) => {
+    const audio = audioRef.current;
+    if (!audio) return;
     if (fadeRef.current) clearInterval(fadeRef.current);
+
     const step = 50;
-    const diff = to - audio.volume;
-    const increment = diff / (duration / step);
+    const increment = (to - audio.volume) / (duration / step);
 
     fadeRef.current = setInterval(() => {
-      if (!audio) return;
-      let newVolume = audio.volume + increment;
-      if ((increment > 0 && newVolume >= to) || (increment < 0 && newVolume <= to)) {
+      let nextVol = audio.volume + increment;
+      if ((increment > 0 && nextVol >= to) || (increment < 0 && nextVol <= to)) {
         audio.volume = to;
         clearInterval(fadeRef.current);
+        if (to === 0) audio.pause();
       } else {
-        audio.volume = Math.min(1, Math.max(0, newVolume));
+        audio.volume = Math.max(0, Math.min(1, nextVol));
       }
     }, step);
   };
 
-  // ================= INITIAL PLAY =================
   const handleStartAudio = async () => {
     const audio = audioRef.current;
     if (!audio) return;
-
     try {
       setHasInteracted(true);
-      audio.muted = false;
       audio.volume = 0;
-      
-      // Memulai pemutaran
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        await playPromise;
-        setIsPlaying(true);
-        fadeVolume(audio, 0.8);
-        setToast("🎵 Musik dimulai");
-      }
+      await audio.play();
+      setIsPlaying(true);
+      fadeVolume(0.7);
     } catch (err) {
-      console.error("Autoplay diblokir:", err);
-      setToast("⚠️ Klik icon musik untuk memutar");
-    } finally {
-      setTimeout(() => setToast(""), 3000);
+      setToast("Klik ikon musik untuk memutar");
     }
   };
 
-  // ================= TOGGLE MUSIC =================
-  const toggleMusic = async () => {
+  const toggleMusic = () => {
     const audio = audioRef.current;
     if (!audio) return;
-
-    try {
-      if (isPlaying) {
-        setToast("🔇 Musik dimatikan");
-        fadeVolume(audio, 0, 500);
-        setTimeout(() => {
-          audio.pause();
-          setIsPlaying(false);
-        }, 500);
-      } else {
-        audio.volume = 0;
-        await audio.play();
-        setIsPlaying(true);
-        fadeVolume(audio, 0.8, 800);
-        setToast("🎵 Musik dinyalakan");
-      }
-    } catch (err) {
-      setToast("❌ Gagal memutar musik");
-    } finally {
-      setTimeout(() => setToast(""), 2000);
+    if (isPlaying) {
+      fadeVolume(0);
+      setIsPlaying(false);
+    } else {
+      audio.play();
+      setIsPlaying(true);
+      fadeVolume(0.7);
     }
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-100 to-blue-50 text-slate-700 overflow-x-hidden font-sans">
-      
-      {/* AUDIO ELEMENT */}
+    <main className="min-h-screen text-slate-800 font-serif overflow-x-hidden selection:bg-rose-100">
+      {/* INTEGRASI AUDIO */}
       <audio 
         ref={audioRef} 
         loop 
         playsInline 
-        preload="auto"
         onCanPlayThrough={() => setIsReady(true)}
-      >
-        <source src="/ssstik.io_1778816090503.mp3" type="audio/mpeg" />
-      </audio>
+        src="/ssstik.io_1778816090503.mp3" 
+      />
 
-      {/* TOAST */}
+      {/* OVERLAY AWAL (Anti-Blokir Autoplay) */}
+      {!hasInteracted && (
+        <div 
+          onClick={handleStartAudio}
+          className="fixed inset-0 z-[9999] bg-stone-900/80 backdrop-blur-md flex items-center justify-center p-6 cursor-pointer"
+        >
+          <div className="bg-white p-10 rounded-full w-72 h-72 flex flex-col items-center justify-center text-center shadow-2xl border-4 border-double border-stone-200 animate-in fade-in zoom-in duration-1000">
+            <p className="text-stone-500 uppercase tracking-widest text-[10px] mb-2">The Wedding of</p>
+            <h2 className="text-2xl mb-6">Anggun & Ilham</h2>
+            <button className="bg-stone-800 text-white text-xs px-6 py-2 rounded-full hover:bg-stone-700 transition-all">
+              Buka Undangan
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* FLOATING MUSIC ICON */}
+      {hasInteracted && (
+        <button
+          onClick={toggleMusic}
+          className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-white/90 backdrop-blur shadow-lg flex items-center justify-center border border-stone-200 transition-all active:scale-90"
+        >
+          <span className={isPlaying ? "animate-spin-slow text-rose-500" : "grayscale opacity-50"}>
+            {isPlaying ? "🎵" : "🔇"}
+          </span>
+        </button>
+      )}
+
+      {/* TOAST NOTIF */}
       {toast && (
-        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[9999] bg-black/80 text-white px-6 py-3 rounded-full text-sm backdrop-blur-sm shadow-xl transition-all">
+        <div className="fixed top-10 left-1/2 -translate-x-1/2 z-[100] bg-white/90 px-6 py-2 rounded-full shadow-xl text-xs">
           {toast}
         </div>
       )}
 
-      {/* OVERLAY AWAL */}
-      {!hasInteracted && (
-        <div
-          onClick={handleStartAudio}
-          className="fixed inset-0 z-[9998] bg-black/70 flex items-center justify-center text-white text-center px-6 backdrop-blur-sm cursor-pointer"
-        >
-          <div className="animate-in fade-in zoom-in duration-700">
-            <p className="text-3xl font-serif mb-4">Undangan Pernikahan</p>
-            <p className="text-lg mb-8 italic">Anggun & Ilham</p>
-            <div className="bg-white/20 p-4 rounded-xl border border-white/30 inline-block">
-               <p className="text-sm">Klik di mana saja untuk membuka</p>
-            </div>
+      {/* HERO SECTION (Background Pernikahan) */}
+      <section className="relative h-screen flex flex-col items-center justify-center text-center px-6 overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-[10s] hover:scale-110"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1600&auto=format&fit=crop')", opacity: 0.2 }}
+        />
+        <div className="relative z-10 space-y-4">
+          <p className="tracking-[0.5em] text-stone-500 text-xs uppercase">Save The Date</p>
+          <h1 className="text-5xl md:text-8xl font-light italic">Anggun & Ilham</h1>
+          <div className="flex gap-4 justify-center mt-10">
+            {Object.entries(countdown).map(([k, v]) => (
+              <div key={k} className="bg-white/50 backdrop-blur-sm p-4 rounded-xl min-w-[70px] shadow-sm">
+                <p className="text-2xl font-light">{v}</p>
+                <p className="text-[10px] uppercase text-stone-400">{k === 'd' ? 'Hari' : k === 'h' ? 'Jam' : k === 'm' ? 'Menit' : 'Detik'}</p>
+              </div>
+            ))}
           </div>
-        </div>
-      )}
-
-      {/* FLOATING MUSIC BUTTON */}
-      {hasInteracted && (
-        <button
-          onClick={toggleMusic}
-          disabled={!isReady}
-          className={`fixed bottom-6 right-6 z-[9997] w-14 h-14 rounded-full bg-white shadow-2xl flex items-center justify-center border border-slate-200 transition-transform active:scale-90 ${!isReady ? 'opacity-50' : 'opacity-100'}`}
-        >
-          <div className={`text-2xl ${isPlaying ? "animate-spin-slow" : ""}`}>
-            {isPlaying ? "🎵" : "🔇"}
-          </div>
-        </button>
-      )}
-
-      {/* HERO SECTION */}
-      <section className="min-h-screen flex flex-col items-center justify-center text-center px-6">
-        <h1 className="text-5xl md:text-7xl font-serif font-light mb-8">
-          Anggun & Ilham
-        </h1>
-
-        <div className="grid grid-cols-4 gap-4 bg-white/50 backdrop-blur p-6 rounded-2xl shadow-inner border border-white">
-          {Object.entries(countdown).map(([label, value]) => (
-            <div key={label} className="flex flex-col">
-              <span className="text-2xl font-bold">{value}</span>
-              <span className="text-[10px] uppercase tracking-wider">{label === 'd' ? 'Hari' : label === 'h' ? 'Jam' : label === 'm' ? 'Menit' : 'Detik'}</span>
-            </div>
-          ))}
         </div>
       </section>
 
-      {/* CONTENT SECTIONS */}
-      {sections.map((s) => (
-        <section key={s.id} className="min-h-[70vh] flex items-center justify-center px-6 py-20">
-          <div className="bg-white/60 backdrop-blur-md p-10 rounded-[2rem] shadow-xl max-w-2xl text-center border border-white/50">
-            <h2 className="text-3xl font-serif mb-6 text-slate-800">{s.title}</h2>
-            <p className="whitespace-pre-line leading-relaxed text-slate-600">{s.content}</p>
+      {/* CONTENT SECTIONS (Tema Awan) */}
+      {sections.slice(1, -1).map((s) => (
+        <section key={s.id} className="min-h-screen flex items-center justify-center px-6 py-20 relative bg-sky-50/30">
+          {/* Latar Belakang Awan */}
+          <div className="absolute inset-0 opacity-40 pointer-events-none overflow-hidden">
+             <div className="absolute top-10 left-10 w-64 h-64 bg-white rounded-full blur-[80px]" />
+             <div className="absolute bottom-20 right-10 w-96 h-96 bg-white rounded-full blur-[100px]" />
+          </div>
+          
+          <div className="relative z-10 bg-white/70 backdrop-blur-md p-10 md:p-16 rounded-[3rem] shadow-xl max-w-2xl text-center border border-white/50 animate-in slide-in-from-bottom-10 duration-1000">
+            <h2 className="text-3xl font-light mb-8 text-stone-700 tracking-wide uppercase text-sm">{s.title}</h2>
+            <p className="whitespace-pre-line leading-relaxed text-stone-600 italic">{s.content}</p>
+
+            {s.id === "gift" && (
+              <div className="mt-10 flex flex-col items-center">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 w-full max-w-[280px]">
+                  {/* LOGO BRI DIPERKECIL & ELEGAN */}
+                  <div className="flex flex-col items-center gap-2 mb-4">
+                    <img 
+                      src="https://upload.wikimedia.org/wikipedia/commons/2/2e/BRI_Logo.svg" 
+                      alt="BRI" 
+                      className="h-4 w-auto opacity-80" 
+                    />
+                    <div className="h-[1px] w-12 bg-slate-200" />
+                  </div>
+                  <p className="text-lg tracking-[0.2em] font-light mb-1">2233 0101 8163 506</p>
+                  <p className="text-[10px] text-slate-400 uppercase tracking-widest">Anggun Ning Tyas</p>
+                </div>
+              </div>
+            )}
           </div>
         </section>
       ))}
 
-      <footer className="py-20 text-center bg-slate-200/30">
-        <h2 className="text-3xl font-serif">Terima Kasih</h2>
-        <p className="mt-2 text-slate-500 italic">Sampai jumpa di hari bahagia kami</p>
+      {/* FOOTER (Background Pernikahan) */}
+      <footer className="relative py-32 text-center overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-bottom"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1600&auto=format&fit=crop')", opacity: 0.15 }}
+        />
+        <div className="relative z-10 px-6">
+          <h2 className="text-5xl font-light italic mb-6">Terima Kasih</h2>
+          <p className="text-sm text-stone-500 max-w-sm mx-auto mb-10 leading-relaxed uppercase tracking-widest">
+            Sampai jumpa di hari bahagia kami
+          </p>
+          <div className="text-2xl font-light tracking-widest uppercase">Anggun & Ilham</div>
+        </div>
       </footer>
 
       <style jsx global>{`
@@ -196,7 +208,7 @@ export default function Home() {
           to { transform: rotate(360deg); }
         }
         .animate-spin-slow {
-          animation: spin-slow 5s linear infinite;
+          animation: spin-slow 8s linear infinite;
         }
       `}</style>
     </main>
